@@ -4,7 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgroung_image"
+    android:background="@drawable/blur_bg_color"
     tools:context="wda.com.diplomawork.ui.RegistrationActivity">
+
+
+    <TextView
+        style="@style/DetailEventTitle"
+        android:text="Registration"/>
 
 </RelativeLayout>
