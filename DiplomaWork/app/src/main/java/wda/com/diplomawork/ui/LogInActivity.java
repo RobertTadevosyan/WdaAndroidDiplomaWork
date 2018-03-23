@@ -1,9 +1,9 @@
 package wda.com.diplomawork.ui;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,129 +12,94 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseException;
-import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthProvider;
 
-import java.util.concurrent.TimeUnit;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import wda.com.diplomawork.R;
-import wda.com.diplomawork.ui.requets.RequestResult;
 
 public class LogInActivity extends AppCompatActivity {
-    private Button button;
-    private Button sendCode;
-    private EditText codeField;
+    private EditText yourLogin;
+    private EditText yourPassword;
+    private Button buttonLogIn;
+    private Button buttonCreate;
     private FirebaseAuth mAuth;
-    private  String mVerificationId;
-    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_log_in);
-        button = findViewById(R.id.sign_in_button);
-        sendCode = findViewById(R.id.send_code);
-        sendCode.setOnClickListener(new View.OnClickListener() {
+        mAuth = FirebaseAuth.getInstance();
+        yourLogin = (EditText) findViewById(R.id.enter_login);
+        yourPassword = (EditText) findViewById(R.id.enter_password);
+        buttonLogIn = (Button) findViewById(R.id.button_login);
+        buttonCreate = (Button) findViewById(R.id.button_create);
+        buttonLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, codeField.getText().toString());
-                signInWithPhoneAuthCredential(credential);
-            }
-        });
-        codeField = findViewById(R.id.code_filed);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendAuthByPhoneNumber();
-            }
-        });
-        initCallBack();
-        
-    }
-
-    private void initCallBack() {
-        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
-            @Override
-            public void onVerificationCompleted(PhoneAuthCredential credential) {
-                // This callback will be invoked in two situations:
-                // 1 - Instant verification. In some cases the phone number can be instantly
-                //     verified without needing to send or enter a verification code.
-                // 2 - Auto-retrieval. On some devices Google Play services can automatically
-                //     detect the incoming verification SMS and perform verification without
-                //     user action.
-                Log.d("TAG", "onVerificationCompleted:" + credential);
-
-//                signInWithPhoneAuthCredential(credential);
-            }
-
-            @Override
-            public void onVerificationFailed(FirebaseException e) {
-                // This callback is invoked in an invalid request for verification is made,
-                // for instance if the the phone number format is not valid.
-//                Log.w(TAG, "onVerificationFailed", e);
-
-                if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    // Invalid request
-                    // ...
-                } else if (e instanceof FirebaseTooManyRequestsException) {
-                    // The SMS quota for the project has been exceeded
-                    // ...
+                if (!validate()) {
+                    return;
                 }
-
-                // Show a message and update the UI
-                // ...
+                sendLoginRequest();
+                moveLoggedInPage();
             }
-
+        });
+        buttonCreate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCodeSent(String verificationId,
-                                   PhoneAuthProvider.ForceResendingToken token) {
-                // The SMS verification code has been sent to the provided phone number, we
-                // now need to ask the user to enter the code and then construct a credential
-                // by combining the code with a verification ID.
-//                Log.d(TAG, "onCodeSent:" + verificationId);
-//
-//                // Save verification ID and resending token so we can use them later
-                mVerificationId = verificationId;
-//                mResendToken = token;
-
-                // ...
+            public void onClick(View view) {
+                moveToRegistrationActivity();
             }
-        };
+        });
     }
 
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        mAuth.signInWithCredential(credential)
+    private void sendLoginRequest() {
+        mAuth.signInWithEmailAndPassword(yourLogin.getText().toString(), yourPassword.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("SUCCESS", "signInWithCredential:success");
-
-                            FirebaseUser user = task.getResult().getUser();
-                            moveToLoggedInActivity();
-
-                            // ...
+//                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
                         } else {
-                            // Sign in failed, display a message and update the UI
-                            Log.w("FAIL", "signInWithCredential:failure", task.getException());
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                // The verification code entered was invalid
-                            }
+                            // If sign in fails, display a message to the user.
+//                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(LogInActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            updateUI(null);
                         }
+
+                        // ...
                     }
                 });
+    }
+
+    private void moveToRegistrationActivity() {
+        Intent intent = new Intent(this, RegistrationActivity.class);
+        startActivity(intent);
+    }
+
+    private void moveLoggedInPage() {
+        Intent intent = new Intent(this, LoggedInActivity.class);
+//        intent.putExtra("login", yourLogin.getText().toString());
+//        intent.putExtra("password", yourPassword.getText().toString());
+        startActivity(intent);
+    }
+
+    private boolean validate() {
+        String error = "";
+        if (!Validation.isValidLogin(yourLogin.getText().toString())) {
+            error = "Login must contain at least 6 characters";
+        } else if (!Validation.isValidPassword(yourPassword.getText().toString())) {
+            error = "Login must contain at least 8 characters";
+        }
+        if (!error.isEmpty()) {
+            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -145,24 +110,27 @@ public class LogInActivity extends AppCompatActivity {
         updateUI(currentUser);
     }
 
-    private void updateUI(FirebaseUser currentUser) {
-        if(currentUser.getPhoneNumber() != null && !currentUser.getPhoneNumber().isEmpty()){
-            moveToLoggedInActivity();
+    private void updateUI(FirebaseUser user){
+        if(user != null && user.getEmail() != null && !user.getEmail().isEmpty()){
+            Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
         }
-//        Toast.makeText(this, "User Exist", Toast.LENGTH_SHORT).show();
+        //TODO: implement
     }
 
-    private void moveToLoggedInActivity() {
-        startActivity(new Intent(LogInActivity.this, LoggedInActivity.class));
-        finish();
-    }
-
-    public void sendAuthByPhoneNumber() {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                "+37498626124",        // Phone number to verify
-                60,                 // Timeout duration
-                TimeUnit.SECONDS,   // Unit of timeout
-                this,               // Activity (for callback binding)
-                mCallbacks);        // OnVerificationStateChangedCallbacks
-    }
 }
+
+class Validation {
+    public static boolean isValidLogin(String login) {
+        return login.length() >= 6;
+    }
+
+    public static boolean isValidPassword(String password) {
+        return password.length() >= 8;
+    }
+
+}
+
+
+
+
+

@@ -39,6 +39,7 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/edit_text_bg"
             android:hint="First name"
+            android:text="Rob"
             android:inputType="text" />
 
 
@@ -48,6 +49,7 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/edit_text_bg"
             android:hint="Last Name"
+            android:text="Tadevosyan"
             android:inputType="text" />
 
 
@@ -57,6 +59,7 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/edit_text_bg"
             android:hint="Login"
+            android:text="robert@wedoapps.eu"
             android:inputType="text" />
 
 
@@ -66,25 +69,27 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/edit_text_bg"
             android:hint="Password"
+            android:text="asdf1234"
             android:inputType="text" />
 
         <EditText
-            android:id="@+id/conf_pass"
+            android:id="@+id/et_conf_pass"
             style="@style/DetailEventTitle"
             android:layout_marginBottom="20dp"
             android:background="@drawable/edit_text_bg"
             android:hint="Confirm Password"
+            android:text="asdf1234"
             android:inputType="text" />
 
         <Button
+            android:id="@+id/register_btn"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
             android:background="@drawable/button_bg"
-            android:text="Sign Up"
+            android:text="Register"
             android:textAllCaps="false"
             android:textSize="30sp"
-
             />
     </LinearLayout>
 </RelativeLayout>
