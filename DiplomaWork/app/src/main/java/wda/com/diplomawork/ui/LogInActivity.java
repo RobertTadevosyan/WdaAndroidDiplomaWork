@@ -3,8 +3,6 @@ package wda.com.diplomawork.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,21 +13,34 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 import wda.com.diplomawork.R;
+import wda.com.diplomawork.base.BaseActivity;
+import wda.com.diplomawork.core.realM.User;
+import wda.com.diplomawork.core.realM.UserRM;
+import wda.com.diplomawork.util.Validation;
 
-public class LogInActivity extends AppCompatActivity {
+public class LogInActivity extends BaseActivity {
     private EditText yourLogin;
     private EditText yourPassword;
     private Button buttonLogIn;
     private Button buttonCreate;
-    private FirebaseAuth mAuth;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
+        if(UserRM.getLoggedInUser() != null){
+            movToLoggedInPageWithNewTask();
+            return;
+        }
         mAuth = FirebaseAuth.getInstance();
         yourLogin = (EditText) findViewById(R.id.enter_login);
         yourPassword = (EditText) findViewById(R.id.enter_password);
@@ -42,7 +53,6 @@ public class LogInActivity extends AppCompatActivity {
                     return;
                 }
                 sendLoginRequest();
-                moveLoggedInPage();
             }
         });
         buttonCreate.setOnClickListener(new View.OnClickListener() {
@@ -81,13 +91,6 @@ public class LogInActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void moveLoggedInPage() {
-        Intent intent = new Intent(this, LoggedInActivity.class);
-//        intent.putExtra("login", yourLogin.getText().toString());
-//        intent.putExtra("password", yourPassword.getText().toString());
-        startActivity(intent);
-    }
-
     private boolean validate() {
         String error = "";
         if (!Validation.isValidLogin(yourLogin.getText().toString())) {
@@ -102,33 +105,33 @@ public class LogInActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
-    }
 
-    private void updateUI(FirebaseUser user){
+    private void updateUI(final FirebaseUser user){
         if(user != null && user.getEmail() != null && !user.getEmail().isEmpty()){
-            Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
+            myRef = database.getReference("users");
+            myRef.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    UserRM userFromFDB = new UserRM();
+                    HashMap<String, String> userMap = (HashMap<String, String>)dataSnapshot.getValue();
+                    userFromFDB.setFirstName(userMap.get("firstName"));
+                    userFromFDB.setLastName(userMap.get("lastName"));
+                    userFromFDB.setLogin(userMap.get("login"));
+                    UserRM.saveUserInRealM(userFromFDB);
+                    movToLoggedInPageWithNewTask();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
-        //TODO: implement
     }
 
 }
 
-class Validation {
-    public static boolean isValidLogin(String login) {
-        return login.length() >= 6;
-    }
-
-    public static boolean isValidPassword(String password) {
-        return password.length() >= 8;
-    }
-
-}
 
 
 

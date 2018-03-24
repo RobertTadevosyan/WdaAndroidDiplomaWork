@@ -1,4 +1,4 @@
-package wda.com.diplomawork.ui.requets;
+package wda.com.diplomawork.core.requets;
 
 /**
  * Created by wedoapps on 3/17/18.

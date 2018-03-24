@@ -5,6 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroung_image"
-    tools:context="wda.com.diplomawork.ui.SplashScreenActivity">
+    tools:context=".ui.SplashScreenActivity">
 
 </android.support.constraint.ConstraintLayout>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:background="@drawable/backgroung_image"
     android:layout_height="match_parent"
-    tools:context="wda.com.diplomawork.ui.LogInActivity"
+    tools:context=".ui.LogInActivity"
     android:orientation="vertical">
     <TextView
         android:layout_width="match_parent"
@@ -32,7 +32,8 @@
         android:inputType="textEmailAddress"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="25dp" />
+        android:layout_marginTop="25dp"
+        android:text="robert@wedoapps.eu"/>
     <EditText
         android:id="@+id/enter_password"
         android:layout_width="match_parent"
@@ -42,7 +43,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="15dp"
         android:layout_marginLeft="15dp"
-        />
+        android:text="asdf1234"/>
     <Button
         android:id="@+id/button_login"
         android:layout_width="match_parent"

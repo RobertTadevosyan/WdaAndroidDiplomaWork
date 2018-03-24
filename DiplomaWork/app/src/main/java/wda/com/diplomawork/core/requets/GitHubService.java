@@ -1,12 +1,9 @@
-package wda.com.diplomawork.ui;
+package wda.com.diplomawork.core.requets;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
-import wda.com.diplomawork.ui.requets.RequestResult;
 
 /**
  * Created by wedoapps on 3/17/18.
