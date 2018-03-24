@@ -12,15 +12,17 @@ public class User {
     private String login;
     private String firstName;
     private String lastName;
+    private String lastSeen;
 
 
     public User() {
     }
 
-    public User(String firstName, String lastName, String login) {
+    public User(String firstName, String lastName, String login, String lastSeen) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.login = login;
+        this.lastSeen = lastSeen;
     }
 
     public String getFirstName() {
@@ -46,6 +48,15 @@ public class User {
     public void setLogin(String login) {
         this.login = login;
     }
+
+    public String getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(String lastSeen) {
+        this.lastSeen = lastSeen;
+    }
+
 
     //    private String password;
 

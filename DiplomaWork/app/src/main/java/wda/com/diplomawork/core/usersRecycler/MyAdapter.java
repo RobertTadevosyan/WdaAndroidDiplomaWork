@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import wda.com.diplomawork.R;
@@ -21,11 +23,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public View root;
         public TextView nameTextView;
         public TextView emailTextView;
+        public TextView lastSeenTextView;
         public ViewHolder(View root) {
             super(root);
             this.root = root;
             nameTextView = root.findViewById(R.id.name_text_view);
             emailTextView = root.findViewById(R.id.email_text_view);
+            lastSeenTextView = root.findViewById(R.id.last_seen_text_view);
         }
     }
 
@@ -53,6 +57,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         User user = users.get(position);
         holder.nameTextView.setText(user.getFirstName() + " "  + user.getLastName());
         holder.emailTextView.setText(user.getLogin());
+        Long lastSeen = Long.valueOf(user.getLastSeen());
+        holder.lastSeenTextView.setText("Last login : " + new SimpleDateFormat("dd-MM-yyyy 'at' HH:mm").format(new Date(lastSeen)));
 
     }
 

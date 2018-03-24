@@ -70,4 +70,11 @@ public class UserRM extends RealmObject {
     public static UserRM getLoggedInUser(){
         return Realm.getDefaultInstance().where(UserRM.class).findFirst();
     }
+
+    public static void removeUserFromDb() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        getLoggedInUser().deleteFromRealm();
+        realm.commitTransaction();
+    }
 }

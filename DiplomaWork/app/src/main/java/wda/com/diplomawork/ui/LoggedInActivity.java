@@ -1,5 +1,6 @@
 package wda.com.diplomawork.ui;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,8 +32,25 @@ public class LoggedInActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logged_in);
-        recyclerViewConfigs();
+        viewConfigs();
         getAllUsersFromFirebaseDataBase();
+    }
+
+    private void viewConfigs() {
+        findViewById(R.id.logout_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logoutUserActionPerformed();
+            }
+        });
+        recyclerViewConfigs();
+    }
+
+    private void logoutUserActionPerformed() {
+        UserRM.removeUserFromDb();
+        Intent intent = new Intent(this, LogInActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void recyclerViewConfigs() {
@@ -49,12 +67,11 @@ public class LoggedInActivity extends BaseActivity {
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-//                HashMap<String, User> userMap = (HashMap<String, String>)dataSnapshot.getValue();
-//                userFromFDB.setFirstName(userMap.get("firstName"));
-//                userFromFDB.setLastName(userMap.get("lastName"));
-//                userFromFDB.setLogin(userMap.get("login"));
                 convertHashMapToUsers(dataSnapshot.getValue());
                 adapter.notifyDataSetChanged();
+                if(allUsers.isEmpty()){
+                    findViewById(R.id.no_active_user_text_view).setVisibility(View.VISIBLE);
+                }
                 findViewById(R.id.progress_layout).setVisibility(View.GONE);
             }
 
@@ -70,7 +87,9 @@ public class LoggedInActivity extends BaseActivity {
         for (Iterator<String> iterator = keys.iterator(); iterator.hasNext(); ){
             String key = iterator.next();
             HashMap<String, String>  map = (HashMap<String, String>) ((HashMap)value).get(key);
-            allUsers.add(new User(map.get("firstName"), map.get("lastName"), map.get("login")));
+            if(!map.get("login").equals(UserRM.getLoggedInUser().getLogin())){
+                allUsers.add(new User(map.get("firstName"), map.get("lastName"), map.get("login"), map.get("lastSeen")));
+            }
         }
 
     }

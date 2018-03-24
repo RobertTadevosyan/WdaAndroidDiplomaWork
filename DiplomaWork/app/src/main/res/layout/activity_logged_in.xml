@@ -9,17 +9,34 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/user_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Log out"
+        android:layout_alignParentBottom="true"/>
+
     <RelativeLayout
         android:id="@+id/progress_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:background="#6d2a2b2b">
+        android:background="#6d2a2b2b"
+        android:gravity="center">
+
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/no_active_user_text_view"
+        android:layout_centerInParent="true"
+        android:textSize="20sp"
+        android:text="No Active User"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

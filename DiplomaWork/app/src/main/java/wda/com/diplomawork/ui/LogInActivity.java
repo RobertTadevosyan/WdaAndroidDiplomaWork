@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,6 +31,7 @@ public class LogInActivity extends BaseActivity {
     private EditText yourPassword;
     private Button buttonLogIn;
     private Button buttonCreate;
+    private RelativeLayout progressLayout;
 
 
 
@@ -42,6 +44,11 @@ public class LogInActivity extends BaseActivity {
             return;
         }
         mAuth = FirebaseAuth.getInstance();
+        viewConfiguretions();
+    }
+
+    private void viewConfiguretions() {
+        progressLayout = findViewById(R.id.progress_layout);
         yourLogin = (EditText) findViewById(R.id.enter_login);
         yourPassword = (EditText) findViewById(R.id.enter_password);
         buttonLogIn = (Button) findViewById(R.id.button_login);
@@ -49,9 +56,7 @@ public class LogInActivity extends BaseActivity {
         buttonLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!validate()) {
-                    return;
-                }
+
                 sendLoginRequest();
             }
         });
@@ -64,6 +69,10 @@ public class LogInActivity extends BaseActivity {
     }
 
     private void sendLoginRequest() {
+        if (!validate()) {
+            return;
+        }
+        progressLayout.setVisibility(View.VISIBLE);
         mAuth.signInWithEmailAndPassword(yourLogin.getText().toString(), yourPassword.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -80,6 +89,7 @@ public class LogInActivity extends BaseActivity {
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
+                        progressLayout.setVisibility(View.GONE);
 
                         // ...
                     }

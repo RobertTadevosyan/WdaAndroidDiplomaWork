@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,10 +19,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import wda.com.diplomawork.R;
 import wda.com.diplomawork.base.BaseActivity;
 import wda.com.diplomawork.core.realM.User;
+import wda.com.diplomawork.core.realM.UserRM;
 
 public class RegistrationActivity extends BaseActivity {
 
@@ -31,6 +34,7 @@ public class RegistrationActivity extends BaseActivity {
     private EditText password;
     private EditText confirmPassword;
     private Button register_btn;
+    private RelativeLayout progressLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,7 @@ public class RegistrationActivity extends BaseActivity {
     }
 
     private void viewsConfig() {
+        progressLayout = findViewById(R.id.progress_layout);
         firstName = findViewById(R.id.et_firstName);
         lastName = findViewById(R.id.et_lastName);
         login = findViewById(R.id.et_logIn);
@@ -78,6 +83,7 @@ public class RegistrationActivity extends BaseActivity {
         if(!areAllFieldsValid()){
             return;
         }
+        progressLayout.setVisibility(View.VISIBLE);
         mAuth.createUserWithEmailAndPassword(login.getText().toString(), password.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -85,12 +91,18 @@ public class RegistrationActivity extends BaseActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             myRef = database.getReference("users");
-                            myRef.child(user.getUid()).setValue(new User(firstName.getText().toString(), lastName.getText().toString(), login.getText().toString()));
+                            myRef.child(user.getUid()).setValue(new User(firstName.getText().toString(), lastName.getText().toString(), login.getText().toString(), String.valueOf(new Date().getTime())));
+                            UserRM userFromFDB = new UserRM();
+                            userFromFDB.setFirstName(firstName.getText().toString());
+                            userFromFDB.setLastName(lastName.getText().toString());
+                            userFromFDB.setLogin(login.getText().toString());
+                            UserRM.saveUserInRealM(userFromFDB);
                             movToLoggedInPageWithNewTask();
                         } else {
                             Toast.makeText(RegistrationActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
+                        progressLayout.setVisibility(View.GONE);
                     }
                 });
     }
