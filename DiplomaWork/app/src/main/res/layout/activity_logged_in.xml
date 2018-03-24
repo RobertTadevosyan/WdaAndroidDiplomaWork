@@ -6,10 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".ui.LoggedInActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Logged in"
-        android:layout_centerInParent="true"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/user_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <RelativeLayout
+        android:id="@+id/progress_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="#6d2a2b2b">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
 
 </RelativeLayout>
