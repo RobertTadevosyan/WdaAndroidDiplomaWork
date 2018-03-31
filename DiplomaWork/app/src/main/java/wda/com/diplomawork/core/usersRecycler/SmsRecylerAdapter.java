@@ -11,50 +11,57 @@ import java.util.Date;
 import java.util.List;
 
 import wda.com.diplomawork.R;
-import wda.com.diplomawork.core.realM.User;
+import wda.com.diplomawork.core.realM.Sms;
+import wda.com.diplomawork.core.realM.UserRM;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private List<User> users;
+public class SmsRecylerAdapter extends RecyclerView.Adapter<SmsRecylerAdapter.ViewHolder> {
+    private List<Sms> smsList;
     private RecyclerViewInterface recyclerViewInterface;
+    private final int TYPE_MINE = 0;
+    private final int TYPE_NOT_MINE = 1;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public View root;
-        public TextView nameTextView;
-        public TextView emailTextView;
-        public TextView lastSeenTextView;
+        public TextView mesageTextView;
+        public TextView timeTextView;
         public int position;
-
         public ViewHolder(View root) {
             super(root);
             this.root = root;
-            nameTextView = root.findViewById(R.id.name_text_view);
-            emailTextView = root.findViewById(R.id.email_text_view);
-            lastSeenTextView = root.findViewById(R.id.last_seen_text_view);
+            mesageTextView = root.findViewById(R.id.message_text_view);
+            timeTextView = root.findViewById(R.id.time_text_view);
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<User> users, RecyclerViewInterface recyclerViewInterface) {
-        this.users = users;
+    public SmsRecylerAdapter(List<Sms> users, RecyclerViewInterface recyclerViewInterface) {
+        this.smsList = users;
         this.recyclerViewInterface = recyclerViewInterface;
     }
 
     // Create new views (invoked by the layout manager)
     @Override
-    public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
+    public SmsRecylerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.user_list_item, parent, false);
+        View v = null;
+        if(viewType == TYPE_MINE){
+            v =  LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.sms_item_send, parent, false);
+        } else {
+            v =  LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.sms_item_recieve, parent, false);
+        }
+
         final ViewHolder vh = new ViewHolder(v);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (recyclerViewInterface != null)
+                if(recyclerViewInterface != null){
                     recyclerViewInterface.onItemClicked(vh.position);
+                }
             }
         });
         return vh;
@@ -65,18 +72,26 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        User user = users.get(position);
-        holder.nameTextView.setText(user.getFirstName() + " " + user.getLastName());
-        holder.emailTextView.setText(user.getLogin());
-        Long lastSeen = Long.valueOf(user.getLastSeen());
-        holder.lastSeenTextView.setText("Last login : " + new SimpleDateFormat("dd-MM-yyyy 'at' HH:mm").format(new Date(lastSeen)));
+        Sms sms = smsList.get(position);
+        holder.mesageTextView.setText(sms.getText());
+        String timeText = new SimpleDateFormat("HH:mm").format(new Date(Long.valueOf(sms.getSendTime())));
+        holder.timeTextView.setText(timeText);
         holder.position = position;
 
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+       if(smsList.get(position).getSenderId().equals(UserRM.getLoggedInUser().getuId())){
+           return TYPE_MINE;
+       } else {
+           return TYPE_NOT_MINE;
+       }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return users.size();
+        return smsList.size();
     }
 }

@@ -18,6 +18,7 @@ public class DiplomApplication extends Application {
         Realm.init(this);
         RealmConfiguration realmConfig = new RealmConfiguration.Builder()
                 .name("diploma.wda.realm")
+                .deleteRealmIfMigrationNeeded()
                 .schemaVersion(0)
                 .build();
         Realm.setDefaultConfiguration(realmConfig);

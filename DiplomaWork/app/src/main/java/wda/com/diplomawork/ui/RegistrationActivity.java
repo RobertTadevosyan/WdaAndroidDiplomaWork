@@ -91,11 +91,12 @@ public class RegistrationActivity extends BaseActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             myRef = database.getReference("users");
-                            myRef.child(user.getUid()).setValue(new User(firstName.getText().toString(), lastName.getText().toString(), login.getText().toString(), String.valueOf(new Date().getTime())));
+                            myRef.child(user.getUid()).setValue(new User(firstName.getText().toString(), lastName.getText().toString(), login.getText().toString(), String.valueOf(new Date().getTime()), user.getUid()));
                             UserRM userFromFDB = new UserRM();
                             userFromFDB.setFirstName(firstName.getText().toString());
                             userFromFDB.setLastName(lastName.getText().toString());
                             userFromFDB.setLogin(login.getText().toString());
+                            userFromFDB.setuId(user.getUid());
                             UserRM.saveUserInRealM(userFromFDB);
                             movToLoggedInPageWithNewTask();
                         } else {

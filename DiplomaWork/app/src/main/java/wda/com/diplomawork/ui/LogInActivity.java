@@ -128,6 +128,7 @@ public class LogInActivity extends BaseActivity {
                     userFromFDB.setFirstName(userMap.get("firstName"));
                     userFromFDB.setLastName(userMap.get("lastName"));
                     userFromFDB.setLogin(userMap.get("login"));
+                    userFromFDB.setuId(userMap.get("uId"));
                     UserRM.saveUserInRealM(userFromFDB);
                     movToLoggedInPageWithNewTask();
                 }

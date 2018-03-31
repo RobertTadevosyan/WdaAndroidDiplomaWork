@@ -13,14 +13,24 @@ public class UserRM extends RealmObject {
     private String login;
     private String firstName;
     private String lastName;
+    private String uId;
+
+    public String getuId() {
+        return uId;
+    }
+
+    public void setuId(String uId) {
+        this.uId = uId;
+    }
 
     public UserRM() {
     }
 
-    public UserRM(String firstName, String lastName, String login) {
+    public UserRM(String firstName, String lastName, String login, String uId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.login = login;
+        this.uId = uId;
     }
 
     public String getFirstName() {
